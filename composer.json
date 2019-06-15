@@ -1,0 +1,14 @@
+{
+    "name": "root/php-patterns",
+    "description": "Head first examples in php",
+    "authors": [
+        {
+            "name": "Evgeny Smekalin",
+            "email": "esmekalin@bookyourstudy.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {"App\\": "src/"}
+    }
+}
