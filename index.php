@@ -1,7 +1,12 @@
 <?php
 
+use App\Observer\WeatherStation;
 use App\Strategy\MiniDuckSimulator;
 
 require "vendor/autoload.php";
 
-new MiniDuckSimulator();
+// Strategy Pattern
+//new MiniDuckSimulator();
+
+// Observer Pattern
+new WeatherStation();
