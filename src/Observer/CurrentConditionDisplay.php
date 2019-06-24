@@ -12,19 +12,19 @@ namespace App\Observer;
  * Class CurrentConditionDisplay
  * @package App\Observer
  *
- * @property Subject $weatherData
+ * @property \SplSubject $weatherData
  */
 
-class CurrentConditionDisplay implements Observer, DisplayElement
+class CurrentConditionDisplay implements \SplObserver, DisplayElement
 {
     private $temperature;
     private $humidity;
     private $weatherData;
 
-    public function __construct(Subject $weatherData)
+    public function __construct(\SplSubject $weatherData)
     {
         $this->weatherData = $weatherData;
-        $this->weatherData->registerObserver($this);
+        $this->weatherData->attach($this);
     }
 
     public function display()
@@ -32,10 +32,14 @@ class CurrentConditionDisplay implements Observer, DisplayElement
         echo "Current conditions {$this->temperature} F degrees and {$this->humidity} % humidity\n";
     }
 
-    public function update($temp, $humidity, $pressure)
+    /**
+     * @param \SplSubject $subject
+     */
+    public function update(\SplSubject $subject)
     {
-        $this->temperature = $temp;
-        $this->humidity = $humidity;
+        /** @var Weather $subject */
+        $this->temperature = $subject->getTemperature();
+        $this->humidity = $subject->getHumidity();
 
         $this->display();
     }

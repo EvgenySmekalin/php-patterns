@@ -18,7 +18,7 @@ class WeatherStation
         $currentDisplay = new CurrentConditionDisplay($weatherData);
 
         $weatherData->setMeasurements(80, 65, 30.4);
-        $weatherData->removeObserver($currentDisplay);
+        $weatherData->detach($currentDisplay);
         // Will now show anything because observer is unset
         $weatherData->setMeasurements(80, 65, 30.4);
     }

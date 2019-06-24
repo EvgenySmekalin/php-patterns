@@ -9,40 +9,23 @@
 namespace App\Observer;
 
 
-class WeatherData implements Subject
+use SplObserver;
+
+class WeatherData implements \SplSubject, Weather
 {
-    private $observers = [];
+    private $observers;
     private $temperature;
     private $humidity;
     private $pressure;
 
-    public function registerObserver(Observer $observer)
+    public function __construct()
     {
-        array_push($this->observers, $observer);
-    }
-
-    public function removeObserver(Observer $observer)
-    {
-        $key = array_search($observer, $this->observers);
-
-        if ($key >= 0) {
-            unset($this->observers[$key]);
-            $this->observers = array_values($this->observers);
-        }
-
-    }
-
-    public function notifyObserver()
-    {
-        /** @var Observer $observer */
-        foreach ($this->observers as $observer) {
-            $observer->update($this->temperature, $this->humidity, $this->pressure);
-        }
+        $this->observers = new \SplObjectStorage();
     }
 
     public function measurementChanged()
     {
-        $this->notifyObserver();
+        $this->notify();
     }
 
     public function setMeasurements($temperature, $humidity, $pressure)
@@ -52,5 +35,71 @@ class WeatherData implements Subject
         $this->pressure    = $pressure;
 
         $this->measurementChanged();
+    }
+
+    /**
+     * Attach an SplObserver
+     * @link https://php.net/manual/en/splsubject.attach.php
+     * @param SplObserver $observer <p>
+     * The <b>SplObserver</b> to attach.
+     * </p>
+     * @return void
+     * @since 5.1.0
+     */
+    public function attach(SplObserver $observer)
+    {
+        $this->observers->attach($observer);
+    }
+
+    /**
+     * Detach an observer
+     * @link https://php.net/manual/en/splsubject.detach.php
+     * @param SplObserver $observer <p>
+     * The <b>SplObserver</b> to detach.
+     * </p>
+     * @return void
+     * @since 5.1.0
+     */
+    public function detach(SplObserver $observer)
+    {
+        $this->observers->detach($observer);
+    }
+
+    /**
+     * Notify an observer
+     * @link https://php.net/manual/en/splsubject.notify.php
+     * @return void
+     * @since 5.1.0
+     */
+    public function notify()
+    {
+        /** @var SplObserver $observer */
+        foreach ($this->observers as $observer) {
+            $observer->update($this);
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTemperature()
+    {
+        return $this->temperature;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHumidity()
+    {
+        return $this->humidity;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPressure()
+    {
+        return $this->pressure;
     }
 }
